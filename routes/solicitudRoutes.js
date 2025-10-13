@@ -12,7 +12,7 @@ const pool = new Pool({
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT s.id, s.fecha, s.observacion,
+      SELECT s.id, s.fecha_solicitud, s.observacion,
              e.nombres AS estudiante,
              d.descripcion AS documento,
              es.descripcion AS especialidad,
@@ -30,16 +30,16 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Crear nueva solicitud
+// Crear nueva solicitud (fecha_solicitud se genera automáticamente)
 router.post('/', async (req, res) => {
   try {
-    const { fecha, observacion, estudiante_id, documento_id, especialidad_id, estatus_id } = req.body;
+    const { observacion, estudiante_id, documento_id, especialidad_id, estatus_id } = req.body;
     const result = await pool.query(
-      `INSERT INTO solicitud (fecha, observacion, estudiante_id, documento_id, especialidad_id, estatus_id)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [fecha, observacion, estudiante_id, documento_id, especialidad_id, estatus_id]
+      `INSERT INTO solicitud (observacion, estudiante_id, documento_id, especialidad_id, estatus_id)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [observacion, estudiante_id, documento_id, especialidad_id, estatus_id]
     );
-    res.json(result.rows[0]);
+    res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error al crear solicitud:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
@@ -50,11 +50,11 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { fecha, observacion, estudiante_id, documento_id, especialidad_id, estatus_id } = req.body;
+    const { observacion, estudiante_id, documento_id, especialidad_id, estatus_id } = req.body;
     const result = await pool.query(
-      `UPDATE solicitud SET fecha = $1, observacion = $2, estudiante_id = $3,
-       documento_id = $4, especialidad_id = $5, estatus_id = $6 WHERE id = $7 RETURNING *`,
-      [fecha, observacion, estudiante_id, documento_id, especialidad_id, estatus_id, id]
+      `UPDATE solicitud SET observacion = $1, estudiante_id = $2,
+       documento_id = $3, especialidad_id = $4, estatus_id = $5 WHERE id = $6 RETURNING *`,
+      [observacion, estudiante_id, documento_id, especialidad_id, estatus_id, id]
     );
     res.json(result.rows[0]);
   } catch (error) {

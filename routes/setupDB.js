@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -45,6 +44,20 @@ const crearTablas = async () => {
         fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         observacion TEXT
       );
+    `);
+
+    // Renombrar columna 'fecha' a 'fecha_solicitud' si existe
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'solicitud' AND column_name = 'fecha'
+        ) THEN
+          ALTER TABLE solicitud RENAME COLUMN fecha TO fecha_solicitud;
+        END IF;
+      END
+      $$;
     `);
 
     console.log('✅ Tablas creadas correctamente');

@@ -41,6 +41,17 @@ const crearTablas = async () => {
       );
     `);
 
+    // Agregar columnas si no existen
+    await pool.query(`
+      ALTER TABLE solicitud
+      ADD COLUMN IF NOT EXISTS fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+    `);
+
+    await pool.query(`
+      ALTER TABLE solicitud
+      ADD COLUMN IF NOT EXISTS observacion TEXT;
+    `);
+
     console.log('✅ Tablas creadas correctamente');
   } catch (error) {
     console.error('❌ Error al crear tablas:', error);
