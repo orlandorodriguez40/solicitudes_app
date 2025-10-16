@@ -41,12 +41,12 @@ const crearTablas = async () => {
         especialidad_id INTEGER REFERENCES especialidad(id) ON DELETE CASCADE,
         documento_id INTEGER REFERENCES documento(id) ON DELETE CASCADE,
         estatus_id INTEGER REFERENCES estatus(id) ON DELETE CASCADE,
-        fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         observacion TEXT
       );
     `);
 
-    // Renombrar columna 'fecha' a 'fecha_solicitud' si existe
+    // Eliminar columna 'fecha' si aún existe (por limpieza)
     await pool.query(`
       DO $$
       BEGIN
@@ -54,7 +54,7 @@ const crearTablas = async () => {
           SELECT 1 FROM information_schema.columns
           WHERE table_name = 'solicitud' AND column_name = 'fecha'
         ) THEN
-          ALTER TABLE solicitud RENAME COLUMN fecha TO fecha_solicitud;
+          ALTER TABLE solicitud DROP COLUMN fecha;
         END IF;
       END
       $$;
