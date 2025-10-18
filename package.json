@@ -19,6 +19,25 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "keywords": [
+    "express",
+    "postgresql",
+    "api",
+    "backend",
+    "solicitudes",
+    "render",
+    "flutter"
+  ],
+  "homepage": "https://github.com/orlandorodriguez40/solicitudes-backend",
+  "bugs": {
+    "url": "https://github.com/orlandorodriguez40/solicitudes-backend/issues"
+  },
+  "contributors": [
+    {
+      "name": "Orlando",
+      "email": "orlandorodriguez40@example.com"
+    }
+  ],
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

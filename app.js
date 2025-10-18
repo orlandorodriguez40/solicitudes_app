@@ -1,38 +1,45 @@
-require('dotenv').config();
+// app.js
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const { Pool } = require('pg');
 
-const app = express();
+// 🔹 Cargar variables de entorno
+dotenv.config();
 
-// 🛡️ Middlewares
+const app = express();
+const port = process.env.PORT || 3000;
+
+// 🔹 Middleware
 app.use(cors());
 app.use(express.json());
 
-// 🗃️ Conexión a PostgreSQL (Render o cualquier servicio en la nube)
+// 🔹 Conexión a PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  ssl: {
+    rejectUnauthorized: false, // necesario para Render
+  },
 });
 
-// 🔍 Ruta de prueba
+// 🔹 Endpoint de prueba
 app.get('/', (req, res) => {
-  res.send('✅ API de Solicitudes funcionando en Render');
+  res.send('API de Solicitudes funcionando 🚀');
 });
 
-// 📦 Rutas principales
-app.use('/estudiantes', require('./routes/estudianteRoutes'));
-app.use('/especialidades', require('./routes/especialidadRoutes'));
-app.use('/documentos', require('./routes/documentoRoutes'));
-app.use('/estatus', require('./routes/estatusRoutes'));
-app.use('/solicitudes', require('./routes/solicitudRoutes'));
-app.use('/estadisticas', require('./routes/estadisticasRoutes')); // ✅ Nueva ruta añadida
-
-// 🚀 Iniciar servidor con puerto dinámico
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+// 🔹 Endpoint de estadísticas
+app.get('/api/estadistica', async (req, res) => {
+  try {
+    const resultado = await pool.query('SELECT tipo, valor FROM estadistica');
+    res.json(resultado.rows);
+  } catch (error) {
+    console.error('Error en /api/estadistica:', error);
+    res.status(500).json({ error: 'Error al obtener estadísticas' });
+  }
 });
 
-// 🧱 Inicialización de tablas (solo una vez al inicio)
-require('./setupDB');
+// 🔹 Iniciar servidor
+app.listen(port, () => {
+  console.log(`Servidor corriendo en puerto ${port}`);
+});
+
