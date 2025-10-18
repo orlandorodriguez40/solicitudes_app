@@ -1,13 +1,33 @@
-# Archivos sensibles
+# 📁 Archivos sensibles
 .env
+.env.local
+.env.production
+.env.example
 
-# Dependencias de Node.js
+# 📦 Dependencias de Node.js
 node_modules/
 
-# Logs y archivos temporales
+# 🧪 Archivos de pruebas
+coverage/
+*.test.js
+*.spec.js
+
+# 🗑️ Logs y archivos temporales
 *.log
 *.tmp
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Archivos del sistema
+# ⚙️ Archivos del sistema
 .DS_Store
 Thumbs.db
+
+# 🧱 Compilaciones y artefactos
+dist/
+build/
+
+# 🧩 Archivos de configuración de IDEs
+.vscode/
+.idea/
+*.swp

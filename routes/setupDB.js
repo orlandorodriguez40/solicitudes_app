@@ -9,32 +9,32 @@ const pool = new Pool({
 const crearTablas = async () => {
   try {
     await pool.query(`
-      -- Tabla: estudiante
+      -- 📘 Tabla: estudiante
       CREATE TABLE IF NOT EXISTS estudiante (
         id SERIAL PRIMARY KEY,
         cedula VARCHAR(20) NOT NULL,
         nombres VARCHAR(100) NOT NULL
       );
 
-      -- Tabla: especialidad
+      -- 📘 Tabla: especialidad
       CREATE TABLE IF NOT EXISTS especialidad (
         id SERIAL PRIMARY KEY,
         descripcion VARCHAR(100) NOT NULL
       );
 
-      -- Tabla: documento
+      -- 📘 Tabla: documento
       CREATE TABLE IF NOT EXISTS documento (
         id SERIAL PRIMARY KEY,
         descripcion VARCHAR(100) NOT NULL
       );
 
-      -- Tabla: estatus
+      -- 📘 Tabla: estatus
       CREATE TABLE IF NOT EXISTS estatus (
         id SERIAL PRIMARY KEY,
         descripcion VARCHAR(100) NOT NULL
       );
 
-      -- Tabla: solicitud
+      -- 📘 Tabla: solicitud
       CREATE TABLE IF NOT EXISTS solicitud (
         id SERIAL PRIMARY KEY,
         estudiante_id INTEGER REFERENCES estudiante(id) ON DELETE CASCADE,
@@ -46,7 +46,7 @@ const crearTablas = async () => {
       );
     `);
 
-    // Eliminar columna 'fecha' si aún existe (por limpieza)
+    // 🧹 Limpieza: eliminar columna obsoleta 'fecha' si existe
     await pool.query(`
       DO $$
       BEGIN

@@ -11,45 +11,49 @@ const pool = new Pool({
 
 async function insertarDatos() {
   try {
-    // Insertar especialidades
+    // 🧠 Especialidades
     await pool.query(`
       INSERT INTO especialidad (descripcion) VALUES
       ('Informática'),
       ('Administración'),
       ('Contaduría'),
-      ('Turismo');
+      ('Turismo')
+      ON CONFLICT DO NOTHING;
     `);
 
-    // Insertar documentos
+    // 📄 Documentos
     await pool.query(`
       INSERT INTO documento (descripcion) VALUES
       ('Constancia de estudios'),
       ('Carnet universitario'),
       ('Carta de buena conducta'),
-      ('Solicitud de espacio');
+      ('Solicitud de espacio')
+      ON CONFLICT DO NOTHING;
     `);
 
-    // Insertar estatus
+    // 📌 Estatus
     await pool.query(`
       INSERT INTO estatus (descripcion) VALUES
       ('Pendiente'),
       ('Aprobado'),
-      ('Rechazado');
+      ('Rechazado')
+      ON CONFLICT DO NOTHING;
     `);
 
-    // Insertar estudiantes
+    // 👥 Estudiantes
     await pool.query(`
       INSERT INTO estudiante (cedula, nombres) VALUES
       ('V12345678', 'Juan Pérez'),
       ('V87654321', 'María Gómez'),
-      ('V11223344', 'Luis Rodríguez');
+      ('V11223344', 'Luis Rodríguez')
+      ON CONFLICT DO NOTHING;
     `);
 
     console.log('✅ Datos de prueba insertados correctamente');
-    pool.end();
   } catch (error) {
     console.error('❌ Error al insertar datos:', error);
-    pool.end();
+  } finally {
+    await pool.end();
   }
 }
 

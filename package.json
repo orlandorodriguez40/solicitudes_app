@@ -1,11 +1,13 @@
 {
-  "name": "backend",
+  "name": "solicitudes-backend",
   "version": "1.0.0",
-  "description": "API para Solicitudes App",
+  "description": "API para Solicitudes App con Express y PostgreSQL",
   "main": "app.js",
   "type": "commonjs",
   "scripts": {
     "start": "node app.js",
+    "dev": "nodemon app.js",
+    "setup": "node setupDB.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +24,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
