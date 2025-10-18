@@ -8,85 +8,107 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// 📋 Obtener todas las solicitudes con JOIN
-router.get('/', async (req, res) => {
+// 📊 Obtener estadísticas generales (calculadas en tiempo real)
+router.get('/resumen', async (req, res) => {
   try {
     const { rows } = await pool.query(`
-      SELECT s.id, s.fecha_solicitud, s.observacion,
-             e.nombres AS estudiante,
-             d.descripcion AS documento,
-             es.descripcion AS especialidad,
-             st.descripcion AS estatus
-      FROM solicitud s
-      JOIN estudiante e ON s.estudiante_id = e.id
-      JOIN documento d ON s.documento_id = d.id
-      JOIN especialidad es ON s.especialidad_id = es.id
-      JOIN estatus st ON s.estatus_id = st.id
+      SELECT
+        COUNT(*) AS total_solicitudes,
+        COUNT(DISTINCT estudiante_id) AS total_estudiantes,
+        COUNT(DISTINCT documento_id) AS total_documentos,
+        COUNT(DISTINCT especialidad_id) AS total_especialidades
+      FROM solicitud
     `);
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('❌ Error al obtener estadísticas:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// 📋 Obtener todas las estadísticas guardadas
+router.get('/', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM estadistica ORDER BY id DESC');
     res.json(rows);
   } catch (error) {
-    console.error('❌ Error al obtener solicitudes:', error);
+    console.error('❌ Error al listar estadísticas:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
-// 🆕 Crear nueva solicitud
-router.post('/', async (req, res) => {
-  const { observacion, estudiante_id, documento_id, especialidad_id, estatus_id } = req.body;
-
-  if (!estudiante_id || !documento_id || !especialidad_id || !estatus_id) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios excepto observación' });
-  }
-
-  try {
-    const { rows } = await pool.query(
-      `INSERT INTO solicitud (observacion, estudiante_id, documento_id, especialidad_id, estatus_id)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [observacion || '', estudiante_id, documento_id, especialidad_id, estatus_id]
-    );
-    res.status(201).json(rows[0]);
-  } catch (error) {
-    console.error('❌ Error al crear solicitud:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-});
-
-// ✏️ Actualizar solicitud
-router.put('/:id', async (req, res) => {
+// 🔍 Obtener una estadística por ID
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  const { observacion, estudiante_id, documento_id, especialidad_id, estatus_id } = req.body;
-
-  if (!estudiante_id || !documento_id || !especialidad_id || !estatus_id) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios excepto observación' });
-  }
-
   try {
-    const { rows } = await pool.query(
-      `UPDATE solicitud SET observacion = $1, estudiante_id = $2,
-       documento_id = $3, especialidad_id = $4, estatus_id = $5 WHERE id = $6 RETURNING *`,
-      [observacion || '', estudiante_id, documento_id, especialidad_id, estatus_id, id]
-    );
+    const { rows } = await pool.query('SELECT * FROM estadistica WHERE id = $1', [id]);
     if (rows.length === 0) {
-      return res.status(404).json({ error: 'Solicitud no encontrada' });
+      return res.status(404).json({ error: 'Estadística no encontrada' });
     }
     res.json(rows[0]);
   } catch (error) {
-    console.error('❌ Error al actualizar solicitud:', error);
+    console.error('❌ Error al obtener estadística:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
-// 🗑️ Eliminar solicitud
+// 🆕 Crear una estadística manual
+router.post('/', async (req, res) => {
+  const { titulo, descripcion, total_solicitudes, total_estudiantes } = req.body;
+
+  if (!titulo || !descripcion) {
+    return res.status(400).json({ error: 'Título y descripción son obligatorios' });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO estadistica (titulo, descripcion, total_solicitudes, total_estudiantes)
+       VALUES ($1, $2, $3, $4) RETURNING *`,
+      [titulo, descripcion, total_solicitudes || 0, total_estudiantes || 0]
+    );
+    res.status(201).json(rows[0]);
+  } catch (error) {
+    console.error('❌ Error al crear estadística:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// ✏️ Actualizar una estadística
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { titulo, descripcion, total_solicitudes, total_estudiantes } = req.body;
+
+  if (!titulo || !descripcion) {
+    return res.status(400).json({ error: 'Título y descripción son obligatorios' });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      `UPDATE estadistica SET titulo = $1, descripcion = $2,
+       total_solicitudes = $3, total_estudiantes = $4 WHERE id = $5 RETURNING *`,
+      [titulo, descripcion, total_solicitudes || 0, total_estudiantes || 0, id]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Estadística no encontrada' });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('❌ Error al actualizar estadística:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// 🗑️ Eliminar una estadística
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('DELETE FROM solicitud WHERE id = $1', [id]);
+    const result = await pool.query('DELETE FROM estadistica WHERE id = $1', [id]);
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Solicitud no encontrada' });
+      return res.status(404).json({ error: 'Estadística no encontrada' });
     }
     res.sendStatus(204);
   } catch (error) {
-    console.error('❌ Error al eliminar solicitud:', error);
+    console.error('❌ Error al eliminar estadística:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
