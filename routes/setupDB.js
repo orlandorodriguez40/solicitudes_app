@@ -44,9 +44,19 @@ const crearTablas = async () => {
         fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         observacion TEXT
       );
+
+      -- 📘 Tabla: estadistica
+      CREATE TABLE IF NOT EXISTS estadistica (
+        id SERIAL PRIMARY KEY,
+        titulo VARCHAR(100) NOT NULL,
+        descripcion TEXT NOT NULL,
+        total_solicitudes INTEGER DEFAULT 0,
+        total_estudiantes INTEGER DEFAULT 0,
+        fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
-    // 🧹 Limpieza: eliminar columna obsoleta 'fecha' si existe
+    // 🧹 Limpieza: eliminar columna obsoleta 'fecha' si existe en solicitud
     await pool.query(`
       DO $$
       BEGIN

@@ -26,6 +26,7 @@ app.use('/especialidades', require('./routes/especialidadRoutes'));
 app.use('/documentos', require('./routes/documentoRoutes'));
 app.use('/estatus', require('./routes/estatusRoutes'));
 app.use('/solicitudes', require('./routes/solicitudRoutes'));
+app.use('/estadisticas', require('./routes/estadisticasRoutes')); // ✅ Nueva ruta añadida
 
 // 🚀 Iniciar servidor con puerto dinámico
 const PORT = process.env.PORT || 3000;
