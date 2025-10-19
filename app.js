@@ -22,6 +22,20 @@ const pool = new Pool({
   },
 });
 
+// 🔹 Importar rutas
+const estudianteRoutes = require('./routes/estudianteRoutes');
+const especialidadRoutes = require('./routes/especialidadRoutes');
+const documentoRoutes = require('./routes/documentoRoutes');
+const estatusRoutes = require('./routes/estatusRoutes');
+const solicitudRoutes = require('./routes/solicitudRoutes');
+
+// 🔹 Registrar rutas
+app.use('/api/estudiante', estudianteRoutes);
+app.use('/api/especialidad', especialidadRoutes);
+app.use('/api/documento', documentoRoutes);
+app.use('/api/estatus', estatusRoutes);
+app.use('/api/solicitud', solicitudRoutes);
+
 // 🔹 Endpoint de prueba
 app.get('/', (req, res) => {
   res.send('API de Solicitudes funcionando 🚀');
