@@ -28,7 +28,7 @@ import especialidadRoutes from './routes/especialidadRoutes.js';
 import documentoRoutes from './routes/documentoRoutes.js';
 import estatusRoutes from './routes/estatusRoutes.js';
 import solicitudRoutes from './routes/solicitudRoutes.js';
-import estadisticaRoutes from './routes/estadisticaRoutes.js'; // ✅ Asegúrate de tener este archivo
+import estadisticaRoutes from './routes/estadisticasRoutes.js'; // ✅ Asegúrate de tener este archivo
 
 // 🔹 Registrar rutas
 app.use('/api/estudiante', estudianteRoutes);
@@ -36,7 +36,7 @@ app.use('/api/especialidad', especialidadRoutes);
 app.use('/api/documento', documentoRoutes);
 app.use('/api/estatus', estatusRoutes);
 app.use('/api/solicitud', solicitudRoutes);
-app.use('/api/estadistica', estadisticaRoutes); // ✅ Ruta dedicada
+app.use('/api/estadistica', estadisticasRoutes); // ✅ Ruta dedicada
 
 // 🔹 Endpoint de prueba
 app.get('/', (req, res) => {
