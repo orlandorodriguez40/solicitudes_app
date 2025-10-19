@@ -1,8 +1,8 @@
 // app.js
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const { Pool } = require('pg');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { Pool } from 'pg';
 
 // 🔹 Cargar variables de entorno
 dotenv.config();
@@ -23,11 +23,11 @@ const pool = new Pool({
 });
 
 // 🔹 Importar rutas
-const estudianteRoutes = require('./routes/estudianteRoutes');
-const especialidadRoutes = require('./routes/especialidadRoutes');
-const documentoRoutes = require('./routes/documentoRoutes');
-const estatusRoutes = require('./routes/estatusRoutes');
-const solicitudRoutes = require('./routes/solicitudRoutes');
+import estudianteRoutes from './routes/estudianteRoutes.js';
+import especialidadRoutes from './routes/especialidadRoutes.js';
+import documentoRoutes from './routes/documentoRoutes.js';
+import estatusRoutes from './routes/estatusRoutes.js';
+import solicitudRoutes from './routes/solicitudRoutes.js';
 
 // 🔹 Registrar rutas
 app.use('/api/estudiante', estudianteRoutes);
