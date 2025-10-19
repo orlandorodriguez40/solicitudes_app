@@ -1,4 +1,5 @@
 // app.js
+import estadisticasRoutes from './routes/estadisticasRoutes.js';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
