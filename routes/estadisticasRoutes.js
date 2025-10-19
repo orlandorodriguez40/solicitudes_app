@@ -1,6 +1,8 @@
-const express = require('express');
+// routes/estadisticasRoutes.js
+import express from 'express';
+import { Pool } from 'pg';
+
 const router = express.Router();
-const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -106,4 +108,5 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
+
