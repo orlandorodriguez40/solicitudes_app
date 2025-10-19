@@ -1,8 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const { Pool } = require('pg');
+import express from 'express';
+import { Pool } from 'pg';
 
-// Conexión a PostgreSQL en Render
+const router = express.Router();
+
+// 🔹 Conexión a PostgreSQL en Render
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
@@ -76,4 +77,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

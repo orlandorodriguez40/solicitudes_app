@@ -1,16 +1,13 @@
-// routes/documentoRoutes.js
 import express from 'express';
 import { Pool } from 'pg';
 
 const router = express.Router();
 
-// 🔹 Conexión a PostgreSQL en Render
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
 });
 
-// 📄 Obtener todos los documentos
 router.get('/', async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM documento');
@@ -21,7 +18,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 🆕 Crear nuevo documento
 router.post('/', async (req, res) => {
   const { descripcion } = req.body;
   if (!descripcion) {
@@ -40,7 +36,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ✏️ Actualizar documento
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { descripcion } = req.body;
@@ -63,7 +58,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// 🗑️ Eliminar documento
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {

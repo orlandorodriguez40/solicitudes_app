@@ -28,6 +28,7 @@ import especialidadRoutes from './routes/especialidadRoutes.js';
 import documentoRoutes from './routes/documentoRoutes.js';
 import estatusRoutes from './routes/estatusRoutes.js';
 import solicitudRoutes from './routes/solicitudRoutes.js';
+import estadisticaRoutes from './routes/estadisticaRoutes.js'; // ✅ Asegúrate de tener este archivo
 
 // 🔹 Registrar rutas
 app.use('/api/estudiante', estudianteRoutes);
@@ -35,25 +36,29 @@ app.use('/api/especialidad', especialidadRoutes);
 app.use('/api/documento', documentoRoutes);
 app.use('/api/estatus', estatusRoutes);
 app.use('/api/solicitud', solicitudRoutes);
+app.use('/api/estadistica', estadisticaRoutes); // ✅ Ruta dedicada
 
 // 🔹 Endpoint de prueba
 app.get('/', (req, res) => {
   res.send('API de Solicitudes funcionando 🚀');
 });
 
-// 🔹 Endpoint de estadísticas
+// 🔹 Endpoint de estadísticas (corregido)
 app.get('/api/estadistica', async (req, res) => {
   try {
-    const resultado = await pool.query('SELECT tipo, valor FROM estadistica');
+    const resultado = await pool.query(`
+      SELECT titulo, descripcion, total_solicitudes, total_estudiantes, fecha
+      FROM estadistica
+      ORDER BY id DESC
+    `);
     res.json(resultado.rows);
   } catch (error) {
-    console.error('Error en /api/estadistica:', error);
+    console.error('❌ Error en /api/estadistica:', error);
     res.status(500).json({ error: 'Error al obtener estadísticas' });
   }
 });
 
 // 🔹 Iniciar servidor
 app.listen(port, () => {
-  console.log(`Servidor corriendo en puerto ${port}`);
+  console.log(`✅ Servidor corriendo en puerto ${port}`);
 });
-

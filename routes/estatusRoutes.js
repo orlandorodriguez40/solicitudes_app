@@ -1,14 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const { Pool } = require('pg');
+import express from 'express';
+import { Pool } from 'pg';
 
-// Conexión a PostgreSQL en Render
+const router = express.Router();
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
 });
 
-// 📌 Obtener todos los estatus
 router.get('/', async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM estatus');
@@ -19,7 +18,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 🆕 Crear nuevo estatus
 router.post('/', async (req, res) => {
   const { descripcion } = req.body;
   if (!descripcion) {
@@ -38,7 +36,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ✏️ Actualizar estatus
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { descripcion } = req.body;
@@ -61,7 +58,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// 🗑️ Eliminar estatus
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -76,4 +72,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
