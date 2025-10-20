@@ -9,10 +9,26 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// 📋 Obtener todas las solicitudes
+// 📋 Obtener todas las solicitudes con JOIN completo
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM solicitud ORDER BY id DESC');
+    const { rows } = await pool.query(`
+      SELECT
+        s.id,
+        e.cedula,
+        e.nombres,
+        esp.descripcion AS especialidad,
+        d.descripcion AS documento,
+        est.descripcion AS estatus,
+        s.fecha,
+        s.observacion
+      FROM solicitud s
+      JOIN estudiante e ON s.estudiante_id = e.id
+      JOIN especialidad esp ON s.especialidad_id = esp.id
+      JOIN documento d ON s.documento_id = d.id
+      JOIN estatus est ON s.estatus_id = est.id
+      ORDER BY s.id DESC
+    `);
     res.status(200).json(rows);
   } catch (error) {
     console.error('❌ Error al listar solicitudes:', error);
