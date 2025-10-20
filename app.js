@@ -44,21 +44,6 @@ app.get('/', (req, res) => {
   res.send('API de Solicitudes funcionando 🚀');
 });
 
-// 🔹 Endpoint de estadísticas (corregido)
-app.get('/api/estadistica', async (req, res) => {
-  try {
-    const resultado = await pool.query(`
-      SELECT titulo, descripcion, total_solicitudes, total_estudiantes, fecha
-      FROM estadistica
-      ORDER BY id DESC
-    `);
-    res.json(resultado.rows);
-  } catch (error) {
-    console.error('❌ Error en /api/estadistica:', error);
-    res.status(500).json({ error: 'Error al obtener estadísticas' });
-  }
-});
-
 // 🔹 Iniciar servidor
 app.listen(port, () => {
   console.log(`✅ Servidor corriendo en puerto ${port}`);

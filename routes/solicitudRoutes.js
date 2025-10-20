@@ -9,109 +9,92 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// 📊 Obtener estadísticas generales (calculadas en tiempo real)
-router.get('/resumen', async (req, res) => {
-  try {
-    const { rows } = await pool.query(`
-      SELECT
-        COUNT(*) AS total_solicitudes,
-        COUNT(DISTINCT estudiante_id) AS total_estudiantes,
-        COUNT(DISTINCT documento_id) AS total_documentos,
-        COUNT(DISTINCT especialidad_id) AS total_especialidades
-      FROM solicitud
-    `);
-    res.json(rows[0]);
-  } catch (error) {
-    console.error('❌ Error al obtener estadísticas:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-});
-
-// 📋 Obtener todas las estadísticas guardadas
+// 📋 Obtener todas las solicitudes
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM estadistica ORDER BY id DESC');
-    res.json(rows);
+    const { rows } = await pool.query('SELECT * FROM solicitud ORDER BY id DESC');
+    res.status(200).json(rows);
   } catch (error) {
-    console.error('❌ Error al listar estadísticas:', error);
+    console.error('❌ Error al listar solicitudes:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
-// 🔍 Obtener una estadística por ID
+// 🔍 Obtener una solicitud por ID
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const { rows } = await pool.query('SELECT * FROM estadistica WHERE id = $1', [id]);
+    const { rows } = await pool.query('SELECT * FROM solicitud WHERE id = $1', [id]);
     if (rows.length === 0) {
-      return res.status(404).json({ error: 'Estadística no encontrada' });
+      return res.status(404).json({ error: 'Solicitud no encontrada' });
     }
-    res.json(rows[0]);
+    res.status(200).json(rows[0]);
   } catch (error) {
-    console.error('❌ Error al obtener estadística:', error);
+    console.error('❌ Error al obtener solicitud:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
-// 🆕 Crear una estadística manual
+// 🆕 Crear una solicitud
 router.post('/', async (req, res) => {
-  const { titulo, descripcion, total_solicitudes, total_estudiantes } = req.body;
+  const { id_estudiante, id_documento, id_especialidad, id_estatus } = req.body;
 
-  if (!titulo || !descripcion) {
-    return res.status(400).json({ error: 'Título y descripción son obligatorios' });
+  if (!id_estudiante || !id_documento || !id_especialidad || !id_estatus) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
   }
 
   try {
     const { rows } = await pool.query(
-      `INSERT INTO estadistica (titulo, descripcion, total_solicitudes, total_estudiantes)
+      `INSERT INTO solicitud (estudiante_id, documento_id, especialidad_id, estatus_id)
        VALUES ($1, $2, $3, $4) RETURNING *`,
-      [titulo, descripcion, total_solicitudes || 0, total_estudiantes || 0]
+      [id_estudiante, id_documento, id_especialidad, id_estatus]
     );
     res.status(201).json(rows[0]);
   } catch (error) {
-    console.error('❌ Error al crear estadística:', error);
+    console.error('❌ Error al crear solicitud:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
-// ✏️ Actualizar una estadística
+// ✏️ Actualizar una solicitud
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { titulo, descripcion, total_solicitudes, total_estudiantes } = req.body;
+  const { id_estudiante, id_documento, id_especialidad, id_estatus } = req.body;
 
-  if (!titulo || !descripcion) {
-    return res.status(400).json({ error: 'Título y descripción son obligatorios' });
+  if (!id_estudiante || !id_documento || !id_especialidad || !id_estatus) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
   }
 
   try {
     const { rows } = await pool.query(
-      `UPDATE estadistica SET titulo = $1, descripcion = $2,
-       total_solicitudes = $3, total_estudiantes = $4 WHERE id = $5 RETURNING *`,
-      [titulo, descripcion, total_solicitudes || 0, total_estudiantes || 0, id]
+      `UPDATE solicitud SET estudiante_id = $1, documento_id = $2,
+       especialidad_id = $3, estatus_id = $4 WHERE id = $5 RETURNING *`,
+      [id_estudiante, id_documento, id_especialidad, id_estatus, id]
     );
     if (rows.length === 0) {
-      return res.status(404).json({ error: 'Estadística no encontrada' });
+      return res.status(404).json({ error: 'Solicitud no encontrada' });
     }
-    res.json(rows[0]);
+    res.status(200).json(rows[0]);
   } catch (error) {
-    console.error('❌ Error al actualizar estadística:', error);
+    console.error('❌ Error al actualizar solicitud:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
-// 🗑️ Eliminar una estadística
+// 🗑️ Eliminar una solicitud
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('DELETE FROM estadistica WHERE id = $1', [id]);
+    const result = await pool.query('DELETE FROM solicitud WHERE id = $1', [id]);
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Estadística no encontrada' });
+      return res.status(404).json({ error: 'Solicitud no encontrada' });
     }
     res.sendStatus(204);
   } catch (error) {
-    console.error('❌ Error al eliminar estadística:', error);
+    console.error('❌ Error al eliminar solicitud:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
 export default router;
+
