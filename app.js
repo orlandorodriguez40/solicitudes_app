@@ -1,4 +1,6 @@
 // app.js
+import opcionesRoutes from './routes/opcionesRoutes.js';
+app.use('/api/opciones', opcionesRoutes);
 import estadisticasRoutes from './routes/estadisticasRoutes.js';
 import express from 'express';
 import cors from 'cors';
