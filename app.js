@@ -1,7 +1,3 @@
-// app.js
-import opcionesRoutes from './routes/opcionesRoutes.js';
-app.use('/api/opciones', opcionesRoutes);
-import estadisticasRoutes from './routes/estadisticasRoutes.js';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -10,6 +6,7 @@ import { Pool } from 'pg';
 // 🔹 Cargar variables de entorno
 dotenv.config();
 
+// 🔹 Inicializar Express
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -31,7 +28,8 @@ import especialidadRoutes from './routes/especialidadRoutes.js';
 import documentoRoutes from './routes/documentoRoutes.js';
 import estatusRoutes from './routes/estatusRoutes.js';
 import solicitudRoutes from './routes/solicitudRoutes.js';
-import estadisticaRoutes from './routes/estadisticasRoutes.js'; // ✅ Asegúrate de tener este archivo
+import estadisticasRoutes from './routes/estadisticasRoutes.js';
+import opcionesRoutes from './routes/opcionesRoutes.js'; // ✅ Ruta dinámica para dropdowns
 
 // 🔹 Registrar rutas
 app.use('/api/estudiante', estudianteRoutes);
@@ -39,7 +37,8 @@ app.use('/api/especialidad', especialidadRoutes);
 app.use('/api/documento', documentoRoutes);
 app.use('/api/estatus', estatusRoutes);
 app.use('/api/solicitud', solicitudRoutes);
-app.use('/api/estadistica', estadisticasRoutes); // ✅ Ruta dedicada
+app.use('/api/estadistica', estadisticasRoutes);
+app.use('/api/opciones', opcionesRoutes);
 
 // 🔹 Endpoint de prueba
 app.get('/', (req, res) => {
