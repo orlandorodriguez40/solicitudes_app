@@ -10,16 +10,14 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// 🔹 Middleware
+// 🔹 Middleware global
 app.use(cors());
 app.use(express.json());
 
-// 🔹 Conexión a PostgreSQL
+// 🔹 Conexión a PostgreSQL en Render
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // necesario para Render
-  },
+  ssl: { rejectUnauthorized: false },
 });
 
 // 🔹 Importar rutas
@@ -29,7 +27,7 @@ import documentoRoutes from './routes/documentoRoutes.js';
 import estatusRoutes from './routes/estatusRoutes.js';
 import solicitudRoutes from './routes/solicitudRoutes.js';
 import estadisticasRoutes from './routes/estadisticasRoutes.js';
-import opcionesRoutes from './routes/opcionesRoutes.js'; // ✅ Ruta dinámica para dropdowns
+import opcionesRoutes from './routes/opcionesRoutes.js'; // ✅ Dropdown dinámico
 
 // 🔹 Registrar rutas
 app.use('/api/estudiante', estudianteRoutes);

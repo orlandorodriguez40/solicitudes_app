@@ -8,10 +8,12 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// 📄 Documentos
+// 📄 Obtener lista de documentos
 router.get('/documentos', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT id, descripcion FROM documento ORDER BY descripcion');
+    const { rows } = await pool.query(
+      'SELECT id, descripcion FROM documento ORDER BY descripcion'
+    );
     res.status(200).json(rows);
   } catch (error) {
     console.error('❌ Error al listar documentos:', error);
@@ -19,10 +21,12 @@ router.get('/documentos', async (req, res) => {
   }
 });
 
-// 🧪 Especialidades
+// 🧪 Obtener lista de especialidades
 router.get('/especialidades', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT id, descripcion FROM especialidad ORDER BY descripcion');
+    const { rows } = await pool.query(
+      'SELECT id, descripcion FROM especialidad ORDER BY descripcion'
+    );
     res.status(200).json(rows);
   } catch (error) {
     console.error('❌ Error al listar especialidades:', error);
@@ -30,10 +34,12 @@ router.get('/especialidades', async (req, res) => {
   }
 });
 
-// 📌 Estatus
+// 📌 Obtener lista de estatus
 router.get('/estatus', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT id, descripcion FROM estatus ORDER BY descripcion');
+    const { rows } = await pool.query(
+      'SELECT id, descripcion FROM estatus ORDER BY descripcion'
+    );
     res.status(200).json(rows);
   } catch (error) {
     console.error('❌ Error al listar estatus:', error);

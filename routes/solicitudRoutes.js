@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
         esp.descripcion AS especialidad,
         d.descripcion AS documento,
         est.descripcion AS estatus,
-        s.fecha,
+        s.fecha_solicitud,
         s.observacion
       FROM solicitud s
       JOIN estudiante e ON s.estudiante_id = e.id
@@ -53,17 +53,24 @@ router.get('/:id', async (req, res) => {
 
 // 🆕 Crear una solicitud
 router.post('/', async (req, res) => {
-  const { id_estudiante, id_documento, id_especialidad, id_estatus } = req.body;
+  const {
+    estudiante_id,
+    documento_id,
+    especialidad_id,
+    estatus_id,
+    fecha_solicitud,
+    observacion,
+  } = req.body;
 
-  if (!id_estudiante || !id_documento || !id_especialidad || !id_estatus) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  if (!estudiante_id || !documento_id || !especialidad_id || !estatus_id || !fecha_solicitud) {
+    return res.status(400).json({ error: 'Todos los campos obligatorios deben estar presentes' });
   }
 
   try {
     const { rows } = await pool.query(
-      `INSERT INTO solicitud (estudiante_id, documento_id, especialidad_id, estatus_id)
-       VALUES ($1, $2, $3, $4) RETURNING *`,
-      [id_estudiante, id_documento, id_especialidad, id_estatus]
+      `INSERT INTO solicitud (estudiante_id, documento_id, especialidad_id, estatus_id, fecha_solicitud, observacion)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [estudiante_id, documento_id, especialidad_id, estatus_id, fecha_solicitud, observacion]
     );
     res.status(201).json(rows[0]);
   } catch (error) {
@@ -75,17 +82,25 @@ router.post('/', async (req, res) => {
 // ✏️ Actualizar una solicitud
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { id_estudiante, id_documento, id_especialidad, id_estatus } = req.body;
+  const {
+    estudiante_id,
+    documento_id,
+    especialidad_id,
+    estatus_id,
+    fecha_solicitud,
+    observacion,
+  } = req.body;
 
-  if (!id_estudiante || !id_documento || !id_especialidad || !id_estatus) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  if (!estudiante_id || !documento_id || !especialidad_id || !estatus_id || !fecha_solicitud) {
+    return res.status(400).json({ error: 'Todos los campos obligatorios deben estar presentes' });
   }
 
   try {
     const { rows } = await pool.query(
       `UPDATE solicitud SET estudiante_id = $1, documento_id = $2,
-       especialidad_id = $3, estatus_id = $4 WHERE id = $5 RETURNING *`,
-      [id_estudiante, id_documento, id_especialidad, id_estatus, id]
+       especialidad_id = $3, estatus_id = $4, fecha_solicitud = $5, observacion = $6
+       WHERE id = $7 RETURNING *`,
+      [estudiante_id, documento_id, especialidad_id, estatus_id, fecha_solicitud, observacion, id]
     );
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Solicitud no encontrada' });
