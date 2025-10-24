@@ -9,27 +9,46 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// 📋 Obtener todas las solicitudes con JOIN completo
+// 📋 Obtener todas las solicitudes con estructura anidada
 router.get('/', async (req, res) => {
   try {
     const { rows } = await pool.query(`
       SELECT
         s.id,
+        s.fecha_solicitud,
+        s.observacion,
         e.cedula,
         e.nombres,
-        esp.descripcion AS especialidad,
-        d.descripcion AS documento,
-        est.descripcion AS estatus,
-        s.fecha_solicitud,
-        s.observacion
+        d.descripcion AS documento_descripcion,
+        esp.descripcion AS especialidad_descripcion,
+        est.descripcion AS estatus_descripcion
       FROM solicitud s
       JOIN estudiante e ON s.estudiante_id = e.id
-      JOIN especialidad esp ON s.especialidad_id = esp.id
       JOIN documento d ON s.documento_id = d.id
+      JOIN especialidad esp ON s.especialidad_id = esp.id
       JOIN estatus est ON s.estatus_id = est.id
       ORDER BY s.id DESC
     `);
-    res.status(200).json(rows);
+
+    const data = rows.map(row => ({
+      estudiante: {
+        cedula: row.cedula,
+        nombres: row.nombres,
+      },
+      documento: {
+        descripcion: row.documento_descripcion,
+      },
+      especialidad: {
+        descripcion: row.especialidad_descripcion,
+      },
+      estatus: {
+        descripcion: row.estatus_descripcion,
+      },
+      fecha_solicitud: row.fecha_solicitud,
+      observacion: row.observacion,
+    }));
+
+    res.status(200).json(data);
   } catch (error) {
     console.error('❌ Error al listar solicitudes:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
